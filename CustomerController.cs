@@ -3,7 +3,27 @@ using System.Collections.Generic;
 
 namespace CustomerService.Controllers
 {
-    [ApiController]
+    /// <summary>
+    /// Represents a controller for managing customer data.
+    /// </summary>
+    /// <remarks>
+    /// This controller provides endpoints for retrieving and adding customer information.
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// // Retrieve all customers
+    /// GET /Customer
+    /// 
+    /// // Add a new customer
+    /// POST /Customer
+    /// {
+    ///     "FirstName": "John",
+    ///     "Surname": "Doe",
+    ///     "ID": 123
+    /// }
+    /// </code>
+    /// </example>
+    /// <seealso cref="ControllerBase" />[ApiController]
     [Route("[controller]")]
     public class CustomerController : ControllerBase
     {
