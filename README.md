@@ -1,2 +1,3 @@
-# chalet--evaluate-csharp-ai
-Evaluating AI’s abilities to write in C#
+# Chalet: Evaluate C# AI
+
+Using Codiumate to evaluate the AI’s abilities to write good code in C#.
