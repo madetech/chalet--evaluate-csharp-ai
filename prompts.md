@@ -286,3 +286,28 @@ namespace YourNamespace
 In this code, `services.AddScoped<CustomerController>();` is added to the ConfigureServices method. This line of code registers `CustomerController` with the dependency injection container, allowing it to be injected into other classes that require it.
 
 Please note that controllers in ASP.NET Core are automatically added to the DI container, so you typically don't need to manually register them. However, if you have a specific need to manually register a controller, you can do so as shown above.
+
+## CSPROJ project file
+
+> Write a CSPROJ file to run on the current version of C# and list the files CustomerContext.cs, CustomerController.cs and Startup.cs
+
+Here is a basic example of a `.csproj` file that includes the files `CustomerContext.cs`, `CustomerController.cs`, and `Startup.cs`. This file is set to use the latest language version of C#.
+
+```cs
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="CustomerContext.cs" />
+    <Compile Include="CustomerController.cs" />
+    <Compile Include="Startup.cs" />
+  </ItemGroup>
+
+</Project>
+```
+
+Please note that you need to replace `net5.0` with the .NET version you are currently using. Also, the paths to the files `CustomerContext.cs`, `CustomerController.cs`, and `Startup.cs` should be relative to the .csproj file. If these files are in different directories, you should include the path to the directory as well. For example, if `Startup.cs` is in a directory named `App`, you would include it like this: `<Compile Include="App/Startup.cs" />`.
