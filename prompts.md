@@ -311,3 +311,154 @@ Here is a basic example of a `.csproj` file that includes the files `CustomerCon
 ```
 
 Please note that you need to replace `net5.0` with the .NET version you are currently using. Also, the paths to the files `CustomerContext.cs`, `CustomerController.cs`, and `Startup.cs` should be relative to the .csproj file. If these files are in different directories, you should include the path to the directory as well. For example, if `Startup.cs` is in a directory named `App`, you would include it like this: `<Compile Include="App/Startup.cs" />`.
+
+## Assemblies
+
+> _(With the `using` statements from `CustomerController.cs` selected)_  
+> What assembly references do I need to add for this code
+
+The code snippet you provided requires the following assembly references:
+
+1. `Microsoft.AspNetCore.Mvc`: This assembly is part of ASP.NET Core MVC and is used for building web APIs and web applications. It provides classes like `ControllerBase`, `HttpGet`, `HttpPost`, and `FromBody`.
+1. `System.Collections.Generic`: This assembly is part of the .NET Standard Library and provides generic collection classes like `List<T>`.
+
+You can add these references to your project by using the NuGet package manager in Visual Studio or by manually editing the `.csproj` file. For `Microsoft.AspNetCore.Mvc`, you would typically install the `Microsoft.AspNetCore.App` or `Microsoft.AspNetCore.All` metapackage, which includes this and other necessary packages for ASP.NET Core development.
+
+> what nuget command do I need to add Microsoft.AspNetCore.Mvc to my csproj
+
+To add the `Microsoft.AspNetCore.Mvc` package to your project using NuGet, you can use the following command in the NuGet Package Manager Console:
+
+```powershell
+Install-Package Microsoft.AspNetCore.Mvc
+```
+
+Alternatively, if you prefer to use the .NET CLI, you can use the following command:
+
+```sh
+dotnet add package Microsoft.AspNetCore.Mvc
+```
+
+Please note that you should replace `Microsoft.AspNetCore.Mvc` with the specific version of the package you want to install if you need a specific version.
+
+> _(With the `using` statements from `Startup.cs` selected)_  
+> What assembly references do I need to add for this code
+
+The assembly references you need to add for this code are:
+
+1. `Microsoft.AspNetCore.Builder`: This assembly contains types for building the application's request pipeline.
+1. `Microsoft.AspNetCore.Hosting`: This assembly provides the core hosting capabilities for ASP.NET Core.
+1. `Microsoft.EntityFrameworkCore`: This assembly is the main package for Entity Framework Core, a popular object-database mapper for .NET.
+1. `Microsoft.Extensions.Configuration`: This assembly provides types and methods for working with configuration data, such as connection strings and application settings.
+1. `Microsoft.Extensions.DependencyInjection`: This assembly provides types for adding and configuring services in a dependency injection container.
+1. `Microsoft.Extensions.Hosting`: This assembly provides types for hosting and startup.
+
+These references are typically added to the project file (.csproj) in the `<ItemGroup>` section. For example:
+
+```xml
+<ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Builder" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.0" />
+</ItemGroup>
+```
+
+Please replace `3.1.0` with the version number that is appropriate for your project.
+
+> When I run `dotnet build` it tells me "Unable to find package Microsoft.AspNetCore.Builder. No packages exist with this id in source(s): /usr/local/share/dotnet/library-packs, nuget.org". How do I fix this?
+
+The error message indicates that the `dotnet build` command is unable to find the `Microsoft.AspNetCore.Builder` package in the specified sources. Here are a few steps you can take to resolve this issue:
+
+1. **Check the package version**: You're trying to use version `3.1.0` of `Microsoft.AspNetCore.Builder`, which might not be available. Check the [NuGet Gallery](https://www.nuget.org/packages/Microsoft.AspNetCore.Builder/) to see if this version exists. If it doesn't, you'll need to update the version number to a valid one.
+1. **Clear NuGet caches**: Sometimes, the local NuGet cache can get corrupted, causing issues like this. You can clear your NuGet caches by running the command `dotnet nuget locals all --clear`.
+1. **Check your NuGet sources**: The error message indicates that the package couldn't be found in the sources `/usr/local/share/dotnet/library-packs` and `nuget.org`. Make sure that these sources are correctly configured and accessible. You can check your NuGet sources by running the command `dotnet nuget list source`.
+1. **Restore packages**: Run `dotnet restore` to restore the packages. This command will download the packages defined in your project file from the sources defined in your NuGet configuration.
+
+If you've checked all these points and the issue still persists, please provide more information about your environment and setup.
+
+> _(With the line `using Microsoft.AspNetCore.Builder` selected in `Startup.cs`)_  
+> dotnet restore tells me "error NU1101: Unable to find package Microsoft.AspNetCore.Builder. No packages exist with this id in source(s): /usr/local/share/dotnet/library-packs, nuget.org"
+
+The error message you're seeing is typically due to the fact that `Microsoft.AspNetCore.Builder` is not a NuGet package. It's actually a namespace that's part of the `Microsoft.AspNetCore.App` metapackage.
+
+In a .NET Core 2.x or .NET Core 3.x project, you don't need to explicitly reference the `Microsoft.AspNetCore.App` package, as it's included by default. However, if you're using .NET 5 or later, you'll need to include the `Microsoft.AspNetCore.App` framework reference in your project file.
+
+Here's an example of how to do this:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>
+```
+
+After adding this, try running `dotnet restore` again.
+
+## Manual code fixup to build
+
+After moving the class `Customer` into its own file and setting namespaces to match, `dotnet build` outputs
+
+```plaintext
+MSBuild version 17.3.2+561848881 for .NET
+/usr/local/share/dotnet/sdk/6.0.408/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.FrameworkReferenceResolution.targets(65,5): warning NETSDK1086: A FrameworkReference for 'Microsoft.AspNetCore.App' was included in the project. This is implicitly referenced by the .NET SDK and you do not typically need to reference it from your project. For more information, see https://aka.ms/sdkimplicitrefs [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+/usr/local/share/dotnet/sdk/6.0.408/Sdks/Microsoft.NET.Sdk.Razor/targets/Sdk.Razor.CurrentVersion.targets(443,5): warning RAZORSDK1006: Detected Razor language version downgrade. This is typically caused by a reference to the Microsoft.AspNetCore.Razor.Design package. Consider removing this package reference. [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+CSC : error CS5001: Program does not contain a static 'Main' method suitable for an entry point [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/Startup.cs(25,35): error CS0246: The type or namespace name 'CustomerContext' could not be found (are you missing a using directive or an assembly reference?) [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/Startup.cs(26,25): error CS1061: 'DbContextOptionsBuilder' does not contain a definition for 'UseMySql' and no accessible extension method 'UseMySql' accepting a first argument of type 'DbContextOptionsBuilder' could be found (are you missing a using directive or an assembly reference?) [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+
+Build FAILED.
+
+/usr/local/share/dotnet/sdk/6.0.408/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.FrameworkReferenceResolution.targets(65,5): warning NETSDK1086: A FrameworkReference for 'Microsoft.AspNetCore.App' was included in the project. This is implicitly referenced by the .NET SDK and you do not typically need to reference it from your project. For more information, see https://aka.ms/sdkimplicitrefs [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+/usr/local/share/dotnet/sdk/6.0.408/Sdks/Microsoft.NET.Sdk.Razor/targets/Sdk.Razor.CurrentVersion.targets(443,5): warning RAZORSDK1006: Detected Razor language version downgrade. This is typically caused by a reference to the Microsoft.AspNetCore.Razor.Design package. Consider removing this package reference. [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+CSC : error CS5001: Program does not contain a static 'Main' method suitable for an entry point [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/Startup.cs(25,35): error CS0246: The type or namespace name 'CustomerContext' could not be found (are you missing a using directive or an assembly reference?) [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/Startup.cs(26,25): error CS1061: 'DbContextOptionsBuilder' does not contain a definition for 'UseMySql' and no accessible extension method 'UseMySql' accepting a first argument of type 'DbContextOptionsBuilder' could be found (are you missing a using directive or an assembly reference?) [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+    2 Warning(s)
+    3 Error(s)
+
+Time Elapsed 00:00:00.77
+
+Workload updates are available. Run `dotnet workload list` for more information.
+```
+
+Removing the `FrameworkReference` for `Microsoft.AspNetCore.App` removed the first warning, so I went back to prompts for the remaining problems.
+
+> _(With the entire contents of the `csproj` file selected)_  
+> `dotnet build` is complaining that "warning RAZORSDK1006: Detected Razor language version downgrade. This is typically caused by a reference to the Microsoft.AspNetCore.Razor.Design package. Consider removing this package reference." How do I resolve this?
+
+The warning message you're seeing is typically caused by a mismatch between the versions of the Razor SDK used in your project and the Microsoft.AspNetCore.Mvc package.
+
+In your project file, you're targeting .NET 6.0 but the Microsoft.AspNetCore.Mvc package version is 2.2.0, which is quite old and not compatible with .NET 6.0.
+
+To resolve this issue, you should upgrade your Microsoft.AspNetCore.Mvc package to a version compatible with .NET 6.0. The same applies to the Microsoft.AspNetCore.Hosting package.
+
+Replace the old package references with the new one:
+
+```xml
+<ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+</ItemGroup>
+```
+
+The `Microsoft.AspNetCore.App` package is a meta-package for ASP.NET Core and includes all features you need for web development, including MVC and Razor Pages. It's also implicitly referenced in .NET Core 3.0 and later, so you don't need to include it in your project file explicitly when targeting these versions.
+
+Remember to remove the old package references to avoid any conflicts.
+
+_Replacing the 2 `Microsoft.AspNetCore` packages with a the `PackageReference` recommended led to 2 new warnings:_
+
+> /usr/local/share/dotnet/sdk/6.0.408/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.DefaultItems.Shared.targets(111,5): warning NETSDK1080: A PackageReference to Microsoft.AspNetCore.App is not necessary when targeting .NET Core 3.0 or higher. If Microsoft.NET.Sdk.Web is used, the shared framework will be referenced automatically. Otherwise, the PackageReference should be replaced with a FrameworkReference. [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+> /usr/local/share/dotnet/sdk/6.0.408/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.DefaultItems.Shared.targets(111,5): warning NETSDK1080: A PackageReference to Microsoft.AspNetCore.App is not necessary when targeting .NET Core 3.0 or higher. If Microsoft.NET.Sdk.Web is used, the shared framework will be referenced automatically. Otherwise, the PackageReference should be replaced with a FrameworkReference. [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+
+_Removing the additional line from the previous prompt removed these warnings, leaving only the error:_
+
+> CSC : error CS5001: Program does not contain a static 'Main' method suitable for an entry point [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
+> /Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/Startup.cs(26,25): error CS1061: 'DbContextOptionsBuilder' does not contain a definition for 'UseMySql' and no accessible extension method 'UseMySql' accepting a first argument of type 'DbContextOptionsBuilder' could be found (are you missing a using directive or an assembly reference?) [/Users/owen.blacker/Projects/clients/MadeTech/chalet--evaluate-csharp-ai/project.csproj]
